@@ -1,0 +1,213 @@
+-- Create database
+CREATE DATABASE SemesterProject;
+
+USE SemesterProject;
+
+ALTER DATABASE SemesterProject
+DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Create table
+-- Table Product
+CREATE TABLE Product (
+	IdPro VARCHAR(50) PRIMARY KEY,
+	NamePro VARCHAR(100) NOT NULL,
+	IdCategory INT NOT NULL,
+	IdBrands INT NOT NULL,
+	Price INT NOT NULL,
+	Quantity INT NOT NULL,
+	Img VARCHAR(50),
+	Description TEXT,
+	Status BOOLEAN DEFAULT 1 NOT NULL
+) ENGINE = INNODB;
+
+-- Table Brands
+CREATE TABLE Brands (
+	IdBrands INT AUTO_INCREMENT PRIMARY KEY,
+	NameBrands VARCHAR(100) NOT NULL,
+	Origin VARCHAR(30),
+	Status BOOLEAN DEFAULT 1 NOT NULL
+) ENGINE = INNODB;
+
+-- Table Category
+CREATE TABLE Category(
+	IdCategory INT AUTO_INCREMENT PRIMARY KEY,
+	NameCategory VARCHAR(100) NOT NULL,
+	Status BOOLEAN DEFAULT 1 NOT NULL
+) ENGINE = INNODB;
+
+-- Table Account
+CREATE TABLE Account(
+	IdAccount INT AUTO_INCREMENT PRIMARY KEY,
+	FullName VARCHAR(50),
+	Email VARCHAR(50) NOT NULL UNIQUE,
+	Passwd VARCHAR(100) NOT NULL,
+	Phonenumber INT NULL,
+	DoB DATE NOT NULL,
+	Gender CHAR(6) NOT NULL,
+	IsAdmin BOOLEAN DEFAULT 0 NOT NULL
+) ENGINE = INNODB;
+
+-- Table Cart
+CREATE TABLE Cart(
+IdPro VARCHAR(50) NOT NULL,
+IdAccount VARCHAR(11) NOT NULL,
+Quantity int,
+PRIMARY KEY(IdPro,IdAccount)
+);
+
+-- Table Images
+CREATE TABLE Img(
+IdImg int AUTO_INCREMENT PRIMARY KEY,
+IdPro VARCHAR(50) NOT NULL,
+NameImg VARCHAR(50)
+);
+
+CREATE TABLE Invoice(
+IdInvoice INT AUTO_INCREMENT PRIMARY KEY,
+IdAccount INT,
+DateBuy date,
+Total INT
+);
+
+CREATE TABLE InvoiceDetails(
+IdInvoice INT,
+IdPro VARCHAR(50),
+Quantity INT NOT NULL,
+Price INT NOT NULL,
+PRIMARY KEY (IdInvoice, IdPro)
+);	
+
+-- Board link
+-- Product with Category
+ALTER TABLE Product ADD	CONSTRAINT FK_PRODUCT_CATEGORY FOREIGN KEY (IdCategory) REFERENCES Category(IdCategory);
+
+-- Product with Brands
+ALTER TABLE Product ADD	CONSTRAINT FK_PRODUCT_BRANDS FOREIGN KEY (IdBrands) REFERENCES Brands(IdBrands);
+
+-- Cart with Product 
+ALTER TABLE Cart ADD CONSTRAINT FK_CART_PRODUCT FOREIGN KEY (IdPro) REFERENCES Product(IdPro);
+
+-- Cart with Account
+ALTER TABLE Cart ADD CONSTRAINT FK_CART_ACCOUNT FOREIGN KEY (IdAccount) REFERENCES Account(IdAccount);
+
+-- Img with Product
+ALTER TABLE Img ADD CONSTRAINT FK_IMG_PRODUCT FOREIGN KEY (IdPro) REFERENCES Product(IdPro);
+
+-- Invoice with Account
+ALTER TABLE Invoice ADD CONSTRAINT FK_INVOICE_ACCOUNT FOREIGN KEY (IdAccount) REFERENCES Account(IdAccount);
+
+-- InvoiceDetails with Invoice
+ALTER TABLE Invoicedetails ADD CONSTRAINT FK_INVOICEDETAILS_INVOICE FOREIGN KEY (IdInvoice) REFERENCES Invoice(IdInvoice);	
+
+-- InvoiceDetails with Product
+ALTER TABLE Invoicedetails ADD CONSTRAINT FK_INVOICEDETAILS_PRODUCT FOREIGN KEY(IdPro) REFERENCES Product(IdPro);
+
+-- Insert data
+
+INSERT INTO Account(FullName, Email, Passwd, DoB, Gender, IsAdmin) VALUES ('admin', 'admin@gmail.com', '$2y$10$H9.ok8j.iXDRVQvypodlW.nb4YYhs6ijUHgDCjDdTEBe.FCuiCdCu', '2000/29/06', 'FEMALE',1);
+-- Insert data into Brands
+INSERT INTO Brands(NameBrands, Origin) VALUES ('HAIER', 'CHINA');
+INSERT INTO Brands(NameBrands, Origin) VALUES ('ASUS', 'TAIWAN');
+INSERT INTO Brands(NameBrands, Origin) VALUES ('APPLE', 'USA');
+INSERT INTO Brands(NameBrands, Origin) VALUES ('DELL', 'USA');
+INSERT INTO Brands(NameBrands, Origin) VALUES ('SAMSUNG', 'KOREA');
+INSERT INTO Brands(NameBrands, Origin) VALUES ('AQUA', 'CHINA');
+INSERT INTO Brands(NameBrands, Origin) VALUES ('SHARP', 'JAPAN');
+INSERT INTO Brands(NameBrands, Origin) VALUES ('LG', 'KOREA');
+
+-- Insert data into Category
+INSERT INTO Category(NameCategory) VALUES ('VACUUM CLEANER');
+INSERT INTO Category(NameCategory) VALUES ('REFRIGERATOR');
+INSERT INTO Category(NameCategory) VALUES ('WASHING MACHINE');
+INSERT INTO Category(NameCategory) VALUES ('LAPTOP');
+INSERT INTO Category(NameCategory) VALUES ('ELECTRIC COOKER');
+INSERT INTO Category(NameCategory) VALUES ('BLENDER');
+
+-- Insert data into Product
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('LT1', '30300_asus_x509fj_ej158t_1', 4, 2, 16900000, 20, 'LT1.jpg', '{"CPU": " Intel® Core™ i7-8565U", "RAM": "4GB DDR4","HARD DRIVE": "512G PCIE SSD}", "VGA": "Nvidia GeForce MX230 2GB"}');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('LT2', 'Laptop Dell Vostro 3480 70183779', 4, 4, 14000000, 50, 'LT2.jpg', '{"CPU": "Intel® Core™ i5 8265U", "RAM": "8GB DDR4 2666MHz", "HARD DRIVE": "HDD: 1TB", "VGA": "Intel® UHD Graphics 620"}');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('LT3', 'Dell G7 17 7790 Gaming', 4, 4, 31900000, 50, 'LT3.jpg', '{"CPU": " 9th Gen Intel® Core™ i7 9750H Processor 2.60 GHz", "RAM": "6GB DDR4 2666MHz","HARD DRIVE":"SSD 512GB","VGA":"6GB GDDR5 video memory NVIDIA® GeForce® GTX 1660"}');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('LT4', 'Laptop Asus VivoBook', 4, 2, 15990000, 50, 'LT4.jpg', '{"CPU":"Intel Core i5-8265U","RAM":"8GB DDr4 Bus 2400Mhz","HARD DRIVE":"1000GB + 16GB optane","VGA":"Intel UHD 620M "}');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('LT5', 'Haier S1 HR-13M/Celeron N3350', 4, 1, 5000000, 50, 'LT5.jpg','{"CPU":"Intel, Celeron","RAM":"3 GB, DDR3L","HARD DRIVE":"eMMC, 32 GB"},"VGA":"Intel® HD Graphics 500"');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('LT6', 'Laptop Haier Pentium N4200', 4, 1, 4900000, 50, 'LT6.jpg', '{"CPU":"Intel Pentium N4200 1.10Ghz","RAM":"6Gb DDR3L","HARD DRIVE":"SSD 128Gb","VGA":" Intel HD Graphics 505"}');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('LT7', 'Laptop Macbook Pro Touch 16 inch 2019', 4, 3, 59000000, 50, 'LT7.jpg', '{"CPU":"Intel Core i7 Coffee Lake, 2.60 GHz","RAM":"16 GB, DDR4, 2666 MHz","HARD DRIVE":"SSD 512GB","VGA":"Radeon Pro 5300M, 4GB"}');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('LT8', 'Laptop Apple Macbook Air 2020', 4, 3, 29000000, 50, 'LT8.jpg', '{"CPU":"Intel Core i3 Thế hệ 10, 1.10 GHz","RAM":"8 GB, LPDDR4X (On board), 3733 MHz","HARD DRIVE":"SSD: 256 GB","VGA":"Intel Iris Plus Graphics"}');
+
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('R1', 'Refrigaretor Haier HRF-225A', 2, 1, 8000000, 50, 'TL1.jpg', '{"Form Factor":"Freezer_top","Capacity":"228","Technology":""}');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('R2', 'Refrigerator HAIER HRF-185A', 2, 1, 5000000, 50, 'TL2.jpg', '{"Form Factor":"Freezer_top","Capacity":"180L","Technology":"multidimensional"}');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('R3', 'Refrigerator LG GN-L205S',2 , 8, 5700000, 50, 'TL3.jpg', '{"Form Facter":"Freezer_top","Capacity":"187L","Technolory":"inverter"}');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('R4', 'Refrigerator Sharp SJ-FX630V-ST', 2, 7, 18000000, 50, 'TL4.jpg', '{"Form Facter":"multi door","Capacity":"556L","Technology":"inverter"}');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('R5', 'Refrigerator Aqua AQR-IP285AB', 2, 6, 8000000, 50, 'TL5.jpg', '{"Form Facter":"Freezer_top","Capacity":"288L","Technology":"inverter"}');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('R6', 'Refrigerator Sharp SJ-GF60A-T', 2, 6, 8000000, 50, 'TL6.jpg', '{"Form Facter":"multi door","Capacity":"470L","Technology":"inverter"}');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('R7', 'Refrigerator LG GR-P247JS', 2, 8, 31400000, 50, 'TL7.jpg', '{"Form Facter":"door in door","Capacity":"601L","Technology":"inverter"}');
+
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('H1', 'Vacuum Cleaner Haier ZC402R', 1, 1, 1440000, 50, 'MHB1.jpg', 'Power: 400W to clean up all stubborn stains; Voltage: AC 220V-240V / 50Hz-60Hz voltage used in Vietnam; UV lamp: 6W / 120mm equipped under the machine to kill harmful bacteria; Dust container capacity: 600 ml contains a lot of dust during use; Machine weight: 1.5kg (including 3kg barrels) compact, helping the handle to move easily');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('H2', 'Haier HT-C2160R HANDHELD MACHINE', 1, 1, 1500000, 50, 'MHB2.jpg', 'Features: Vacuuming; Capacity: Under 2000W; Power source: Direct electricity is used; Warranty: 6 months.');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('H3', 'Haier Vacuum Cleaning Robot TAB-T550WSC', 1, 1, 5200000, 50, 'MHB3.jpg', 'Haier mop robot vacuum cleaner TAB-T550WSC with handheld vacuum cleaner; Box capacity: 0.6l; Height: 7.8cm; Battery capacity: 2600mAh; Suction force 1800Pa; Capacity: <500W');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('H4', 'Haier Handheld Vacuum Cleaner ZC401G', 1, 1, 1500000, 50, 'MHB4.jpg', 'Capacity: 400W; Voltage: AC 220V / 50Hz-60Hz; Dust container capacity: 500ml; Dimensions: 312 x 160 x 295 mm; Noise level: 78 dB');
+INSERT INTO Product (IdPro, NamePro, IdCategory, IdBrands, Price, Quantity, Img, Description) VALUES ('H5', 'Haier ZC406G carpet cleaner', 1, 1, 1600000, 50, 'MHB5.jpg', 'Specialized for blankets, cushions, sofas ... vacuuming and disinfecting by ultraviolet rays. I have used this year, only 2 times a week, the bed mattress is called "clean", I feel more comfortable sleeping. Especially if there are children or sensitive skin sensitive people, this machine is the perfect choice. Fear about aphids, lice, ... also no more.');
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT1','LT1a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT1','LT1b.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT1','LT1c.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT1','LT1d.jpg');
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT2','LT2a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT2','LT2b.jpg');
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT3', 'LT3a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT3', 'LT3b.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT3', 'LT3c.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT3', 'LT3d.jpg');
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT4', 'LT4a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT4', 'LT4b.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT4', 'LT4c.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT4', 'LT4d.jpg');
+
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT5','LT5a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT5','LT5b.jpg');
+
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT6','LT6a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT6','LT6b.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT6','LT6c.jpg');
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT7','LT7a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT7','LT7b.jpg');
+
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT8','LT8a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT8','LT8b.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('LT8','LT8c.jpg');
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('R1','R1a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('R1','R1b.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('R1','R1c.jpg');
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('R2','R2a.jpg');
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('R3','R3a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('R3','R3b.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('R3','R3c.jpg');
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('R4','R4a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('R4','R4b.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('R4','R4c.jpg');
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('R5','R5a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('R5','R5b.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('R5','R5c.jpg');
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('R6','R6a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('R6','R6b.jpg');
+
+INSERT INTO Img (IdPro, NameImg) VALUES ('R7','R7a.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('R7','R7b.jpg');
+INSERT INTO Img (IdPro, NameImg) VALUES ('R7','R7c.jpg');
+
+INSERT INTO invoice (IdAccount, DateBuy, Total) VALUES(1, '2019-06-29',3000000);
+
+INSERT INTO invoicedetails VALUES(1,'LT1',1,14400000);
+INSERT INTO invoicedetails VALUES(1,'H2',1,1500000);
